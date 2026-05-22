@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuREPower I&C Form 20.0</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #e8f0f7;
+    --primary-mid: #2d5a8c;
+    --accent: #f0a500;
+    --accent-light: #fff8e6;
+    --surface: #ffffff;
+    --surface2: #f7f9fc;
+    --border: #e0e4e8;
+    --text: #1a2a3a;
+    --text-muted: #6b7c8c;
+    --danger: #e05252;
+    --info: #2563eb;
+    --info-light: #eff6ff;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(26,58,92,0.07);
+    --shadow-lg: 0 8px 32px rgba(26,58,92,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #f0f4f7 0%, #e8f0ff 100%);
+    min-height: 100vh;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .header {
+    background: var(--primary);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(26,58,92,0.3);
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-circle {
+    width: 40px; height: 40px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; color: #1a2e24;
+    flex-shrink: 0;
+  }
+  .header-text h1 { font-size: 16px; font-weight: 600; color: #fff; line-height: 1.2; }
+  .header-text p { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+  .progress-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    position: sticky;
+    top: 72px;
+    z-index: 99;
+  }
+  .progress-inner { max-width: 860px; margin: 0 auto; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-mid)); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+  .main { max-width: 860px; margin: 0 auto; padding: 28px 24px 60px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-header:hover { background: #eef2f7; }
+  .card-icon {
+    width: 32px; height: 32px;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--primary); flex: 1; }
+  .card-chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+  .card-chevron.open { transform: rotate(180deg); }
+  .card-body { padding: 20px; display: block; }
+  .card-body.collapsed { display: none; }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label.lbl {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a2a3a;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .req { color: var(--danger); }
+  input[type=text], input[type=email], input[type=tel],
+  input[type=number], input[type=date], input[type=password], select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
+  }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7c8c' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media(max-width:600px){ .row2,.row3 { grid-template-columns: 1fr; } }
+  .yn-group { display: flex; gap: 12px; }
+  .yn-opt {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .yn-opt input { display: none; }
+  .yn-opt:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .yn-opt.selected-yes { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .yn-opt.selected-no { border-color: #e05252; background: #fff5f5; color: #e05252; }
+  .yn-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+  .yn-opt.selected-yes .yn-dot, .yn-opt.selected-no .yn-dot { opacity: 1; }
+  .note {
+    font-size: 12px; color: var(--text-muted);
+    background: var(--info-light);
+    border-left: 3px solid var(--info);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .str-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .str-pill {
+    padding: 7px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .str-pill:hover { border-color: var(--primary); color: var(--primary); }
+  .str-pill.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .sub-block { display: none; animation: fadeUp 0.3s ease both; }
+  .sub-block.visible { display: block; }
+  .sub-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--primary);
+    padding: 10px 14px;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    margin: 16px 0 14px;
+  }
+  .bat-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: #854F0B;
+    padding: 10px 14px;
+    background: #FAEEDA;
+    border-radius: var(--radius-sm);
+    margin: 16px 0 14px;
+  }
+  .dg-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: #712B13;
+    padding: 10px 14px;
+    background: #FAECE7;
+    border-radius: var(--radius-sm);
+    margin: 16px 0 14px;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .hidden { display: none !important; }
+  .filler-tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .tag-pure { background: #E6F1FB; color: #0C447C; }
+  .tag-dealer { background: #FAEEDA; color: #633806; }
+  .step-label { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .submit-wrap { margin-top: 28px; }
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { background: #122840; }
+  .submit-btn:active { transform: scale(0.99); }
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--primary); color: #fff;
+    padding: 12px 24px; border-radius: 30px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+    z-index: 999; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-top: 28px;
+  }
+  .success-screen.show { display: block; animation: fadeUp 0.5s ease both; }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-screen h2 { font-size: 22px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+  .success-screen p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .new-btn {
+    margin-top: 24px;
+    padding: 10px 28px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .new-btn:hover { background: var(--primary); color: #fff; }
+
+  /* File upload */
+  .file-upload-wrap { margin-top: 6px; }
+  .file-upload-label {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    transition: all 0.2s;
+  }
+  .file-upload-label:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .file-upload-label input[type=file] { display: none; }
+  .file-upload-icon { font-size: 18px; }
+  .file-upload-text { flex: 1; }
+  .file-upload-text strong { display: block; font-size: 13px; font-weight: 500; }
+  .file-upload-text span { font-size: 11px; color: var(--text-muted); }
+  .file-preview {
+    margin-top: 8px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .file-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--primary-light);
+    border: 1px solid #b5d4f4;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--primary);
+    max-width: 200px;
+    overflow: hidden;
+  }
+  .file-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-chip-remove { cursor: pointer; font-size: 14px; color: var(--text-muted); flex-shrink: 0; line-height: 1; }
+  .file-chip-remove:hover { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-circle">PP</div>
+    <div class="header-text">
+      <h1>PuREPower I&amp;C Form 20.0</h1>
+      <p>Installation &amp; Commissioning Checklist</p>
+    </div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-label">
+      <span id="progress-text">Getting started...</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<div class="main" id="form-wrap">
+
+  <!-- Form Filled By -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">📋</div>
+      <span class="card-title">Form Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="lbl">Form Filled by <span class="req">*</span></label>
+        <select id="filledBy" onchange="handleFilledBy()">
+          <option value="">— Select who is filling this form —</option>
+          <option value="pure">PuRE Team</option>
+          <option value="customer">Customer</option>
+          <option value="dealer">Dealer / Distributor</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- PuRE Team Details -->
+  <div class="card hidden" id="sec-pure">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🏢</div>
+      <span class="card-title">PuRE Team Details <span class="filler-tag tag-pure">PuRE Team</span></span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label class="lbl">PuRE Team Concern Name <span class="req">*</span></label><input type="text" placeholder="Full name"></div>
+        <div class="field"><label class="lbl">PuRE Team Email ID <span class="req">*</span></label><input type="email" placeholder="name@purepower.com"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dealer Details -->
+  <div class="card hidden" id="sec-dealer">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🏪</div>
+      <span class="card-title">Dealer / Distributor Details <span class="filler-tag tag-dealer">Dealer</span></span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label class="lbl">Showroom Name <span class="req">*</span></label><input type="text" placeholder="Showroom name"></div>
+        <div class="field"><label class="lbl">Dealer / Distributor Email ID <span class="req">*</span></label><input type="email" placeholder="email@dealer.com"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Details -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">👤</div>
+      <span class="card-title">Customer Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label class="lbl">Customer Name <span class="req">*</span></label><input type="text" placeholder="Full name"></div>
+        <div class="field"><label class="lbl">Mobile Number <span class="req">*</span></label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">Email ID</label><input type="email" placeholder="email@example.com"></div>
+        <div class="field"><label class="lbl">State</label><input type="text" placeholder="State"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">City</label><input type="text" placeholder="City"></div>
+        <div class="field"><label class="lbl">Pincode</label><input type="text" placeholder="Pincode"></div>
+      </div>
+      <div class="field"><label class="lbl">Address</label><textarea placeholder="Full installation address..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- Product Details -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">⚡</div>
+      <span class="card-title">Product Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label class="lbl">PuREPower Model</label><input type="text" value="PuREPower 20.0" readonly style="background:#f7f9fc;color:#6b7c8c;cursor:not-allowed;"></div>
+        <div class="field"><label class="lbl">Model Number</label><input type="text" placeholder="Model number"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Product Serial No</label><input type="text" placeholder="Serial no."></div>
+        <div class="field"><label class="lbl">INV Code</label><input type="text" placeholder="INV code"></div>
+        <div class="field"><label class="lbl">Installation Start Date</label><input type="date"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solar Toggle -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🌞</div>
+      <span class="card-title">Solar Connection</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="lbl">Have you connected Solar? <span class="req">*</span></label>
+        <select id="solarConnected" onchange="handleSolar()">
+          <option value="">— Select —</option>
+          <option value="yes">Yes — Solar is connected</option>
+          <option value="no">No — Solar not connected</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solar Details (conditional) -->
+  <div class="card hidden" id="sec-solar">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">☀️</div>
+      <span class="card-title">Solar Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="note">In OFF-GRID conditions only, all PV strings must be properly connected to PV1, PV2, and PV3</div>
+      <div class="field">
+        <label class="lbl">SLD made available before connecting DC input</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="sld"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="sld"><span class="yn-dot"></span>No</label>
+        </div>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label">
+            <input type="file" id="att_sld" accept="image/*,.pdf" onchange="handleFileUpload(this,'prev_sld')">
+            <span class="file-upload-icon">📎</span>
+            <div class="file-upload-text"><strong>Attach SLD Document</strong><span>JPG, PNG or PDF</span></div>
+          </label>
+          <div class="file-preview" id="prev_sld"></div>
+        </div>
+      </div>
+      <div class="field"><label class="lbl">PV Module Manufacturer Name</label><input type="text" placeholder="e.g. Waaree, Adani Solar"></div>
+      <div class="field">
+        <label class="lbl">Upload Solar Module Datasheet / Label Picture (back of panel)</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label">
+            <input type="file" id="att_datasheet" accept="image/*,.pdf" onchange="handleFileUpload(this,'prev_datasheet')">
+            <span class="file-upload-icon">📎</span>
+            <div class="file-upload-text"><strong>Attach Module Datasheet</strong><span>JPG, PNG or PDF</span></div>
+          </label>
+          <div class="file-preview" id="prev_datasheet"></div>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Module Max Power (Wp)</label><input type="number" placeholder="Wp"></div>
+        <div class="field"><label class="lbl">PV Module Voc (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Total Plant Capacity (W)</label><input type="number" placeholder="W"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">PV Module Isc (A)</label><input type="number" placeholder="A"></div>
+        <div class="field"><label class="lbl">PV Module Imax (A)</label><input type="number" placeholder="A"></div>
+      </div>
+      <div class="field">
+        <label class="lbl">6 sqmm x 4C core copper cable used &amp; routed through conduits</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="cable"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="cable"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:10px;">⚡ Connected Strings</div>
+      <p class="step-label">Select number of connected strings (max 3 for PuREPower 20.0):</p>
+      <div class="str-selector" id="str-selector">
+        <div class="str-pill" onclick="showStrings(1)">String 1</div>
+        <div class="str-pill" onclick="showStrings(2)">String 2</div>
+        <div class="str-pill" onclick="showStrings(3)">String 3</div>
+      </div>
+      <div id="strings-container"></div>
+
+      <hr class="divider">
+      <div class="sub-header">🗂️ DC Distribution Box &amp; Protection</div>
+      <div class="field">
+        <label class="lbl">DCDB Installation (Mandatory) — Attach Picture</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_dcdb" accept="image/*,.pdf" onchange="handleFileUpload(this,'prev_dcdb')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach DCDB Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_dcdb"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Each Fuse Rating is 32A — Attach Picture</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_fuse" accept="image/*" onchange="handleFileUpload(this,'prev_fuse')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Fuse Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_fuse"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">600V DC Surge Protection Device (SPD) Installed — Attach Picture</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_spd" accept="image/*" onchange="handleFileUpload(this,'prev_spd')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach SPD Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_spd"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">SPD Grounded to Earth Pit — Attach Picture</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_spd_earth" accept="image/*" onchange="handleFileUpload(this,'prev_spd_earth')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach SPD Earthing Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_spd_earth"></div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <!-- Solar load test -->
+      <div class="sub-header">🔬 Solar Load Test</div>
+      <div class="field">
+        <label class="lbl">Conduct load test in off-grid solar mode (Switched OFF Input AC Grid)</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="loadtest"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="loadtest"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Battery SOC between 99%–100% before commencing test — Attach Screenshot</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="soc_test"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="soc_test"><span class="yn-dot"></span>No</label>
+        </div>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_soc" accept="image/*" onchange="handleFileUpload(this,'prev_soc')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach SOC Screenshot</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_soc"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Solar generation is at least 50% of solar plant size (kW) — Attach Screenshot</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="solar_50"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="solar_50"><span class="yn-dot"></span>No</label>
+        </div>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_solar50" accept="image/*" onchange="handleFileUpload(this,'prev_solar50')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Solar Generation Screenshot</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_solar50"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">All nominal loads running in solar mode</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="nom_loads"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="nom_loads"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Output Power R-Phase (kW)</label><input type="number" placeholder="kW"></div>
+        <div class="field"><label class="lbl">Output Power Y-Phase (kW)</label><input type="number" placeholder="kW"></div>
+        <div class="field"><label class="lbl">Output Power B-Phase (kW)</label><input type="number" placeholder="kW"></div>
+      </div>
+      <div class="field">
+        <label class="lbl">Attach Video / Picture — Nominal Load Each Phase</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_nom_load" accept="image/*,video/*" onchange="handleFileUpload(this,'prev_nom_load')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Video or Picture</strong><span>JPG, PNG or MP4</span></div></label>
+          <div class="file-preview" id="prev_nom_load"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">All full loads running in solar mode</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="full_loads"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="full_loads"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Output Power R-Phase (kVA)</label><input type="number" placeholder="kVA"></div>
+        <div class="field"><label class="lbl">Output Power Y-Phase (kVA)</label><input type="number" placeholder="kVA"></div>
+        <div class="field"><label class="lbl">Output Power B-Phase (kVA)</label><input type="number" placeholder="kVA"></div>
+      </div>
+      <div class="field">
+        <label class="lbl">Attach Video / Picture — Full Load Each Phase</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_full_load" accept="image/*,video/*" onchange="handleFileUpload(this,'prev_full_load')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Video or Picture</strong><span>JPG, PNG or MP4</span></div></label>
+          <div class="file-preview" id="prev_full_load"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">DC Earthing Value (&lt;5 ohm) — Attach Picture</label>
+        <input type="number" placeholder="ohm">
+        <div class="file-upload-wrap" style="margin-top:8px">
+          <label class="file-upload-label"><input type="file" id="att_dc_earth" accept="image/*" onchange="handleFileUpload(this,'prev_dc_earth')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach DC Earthing Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_dc_earth"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Upload Display Picture (Solar Side)</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_display_solar" accept="image/*" onchange="handleFileUpload(this,'prev_display_solar')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Display Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_display_solar"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">DC earthing connected to separate earth pit, resistance below 5 ohms</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="dc_earth"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="dc_earth"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Battery charging through solar (Switched OFF Input AC Grid)</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="bat_solar"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="bat_solar"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Electrical Checklist -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🔌</div>
+      <span class="card-title">Electrical Checklist</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="field"><label class="lbl">Read manual &amp; prepared required materials before installation</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e0"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e0"><span class="yn-dot"></span>No</label></div></div>
+      <div class="field"><label class="lbl">6 sqmm x 4C core copper cable used &amp; routed through conduits</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e1"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e1"><span class="yn-dot"></span>No</label></div></div>
+      <div class="field"><label class="lbl">Correct lug type used — Cu ring (6 sqmm x 4mm) or Bimetallic</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e2"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e2"><span class="yn-dot"></span>No</label></div></div>
+      <div class="field"><label class="lbl">ACDB installed — Attach Picture</label>
+        <div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e3"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e3"><span class="yn-dot"></span>No</label></div>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_acdb" accept="image/*" onchange="handleFileUpload(this,'prev_acdb')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach ACDB Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_acdb"></div>
+        </div>
+      </div>
+      <div class="field"><label class="lbl">AC MCB rated 4P, 63A confirmed</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e4"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e4"><span class="yn-dot"></span>No</label></div></div>
+      <div class="field"><label class="lbl">RYBNE connections correct phase sequence, no loose cables</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e5"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e5"><span class="yn-dot"></span>No</label></div></div>
+      <div class="field"><label class="lbl">Input &amp; output neutral not connected at single point</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="e6"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="e6"><span class="yn-dot"></span>No</label></div></div>
+      <hr class="divider">
+      <div class="note">PuREPower 20.0 I/P &amp; O/P Display Monitoring — enter values for R, Y, B phases</div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-Ph R (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-Ph Y (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-Ph B (V)</label><input type="number" placeholder="V"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-N R (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-N Y (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Grid Input Voltage Ph-N B (V)</label><input type="number" placeholder="V"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Grid Input Current (A)</label><input type="number" placeholder="A"></div>
+        <div class="field"><label class="lbl">Input Frequency (Hz)</label><input type="number" placeholder="Hz"></div>
+        <div class="field"><label class="lbl">Output Power Grid Mode (W)</label><input type="number" placeholder="W"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Output Voltage Ph-Ph (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Output Voltage Ph-N (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">AC Output Frequency (Hz)</label><input type="number" placeholder="Hz"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">Load % on each Phase</label><input type="number" placeholder="%"></div>
+        <div class="field"><label class="lbl">Load segregation if exceeds 5 kVA on any single phase</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="load_seg"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="load_seg"><span class="yn-dot"></span>No</label></div></div>
+      </div>
+      <hr class="divider">
+      <div class="sub-header">🔋 Battery Mode Load Test</div>
+      <div class="field"><label class="lbl">Output Power on Battery Mode (W) — Grid &amp; Solar switched OFF</label><input type="number" placeholder="W"></div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Output Voltage Ph-Ph (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">Output Voltage Ph-N (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">AC Output Frequency (Hz)</label><input type="number" placeholder="Hz"></div>
+      </div>
+      <div class="field"><label class="lbl">Load % on each Phase (Battery Mode)</label><input type="number" placeholder="%"></div>
+      <div class="field">
+        <label class="lbl">Upload Display Photo of AC Input</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_ac_display" accept="image/*" onchange="handleFileUpload(this,'prev_ac_display')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach AC Display Photo</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_ac_display"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Battery SOC 99%–100% before battery mode test — Attach Screenshot</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_bat_soc" accept="image/*" onchange="handleFileUpload(this,'prev_bat_soc')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach SOC Screenshot</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_bat_soc"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Upload Short Video / Picture — Full Load Test on Battery Mode</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_bat_test" accept="image/*,video/*" onchange="handleFileUpload(this,'prev_bat_test')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Video or Picture (max 5 mins)</strong><span>JPG, PNG or MP4</span></div></label>
+          <div class="file-preview" id="prev_bat_test"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">AC Earthing Value (ohm) — Attach Picture</label>
+        <input type="number" placeholder="ohm">
+        <div class="file-upload-wrap" style="margin-top:8px">
+          <label class="file-upload-label"><input type="file" id="att_ac_earth" accept="image/*" onchange="handleFileUpload(this,'prev_ac_earth')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach AC Earthing Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_ac_earth"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Input voltage Neutral–Earth does not exceed 5V — Attach Picture</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="ne_5v"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="ne_5v"><span class="yn-dot"></span>No</label>
+        </div>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_ne5v" accept="image/*" onchange="handleFileUpload(this,'prev_ne5v')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Neutral-Earth Voltage Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_ne5v"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Leakage current on input &amp; output neutral sides does not exceed 100mA — ELCB installed</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="leakage"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="leakage"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DG Synchronization -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🔧</div>
+      <span class="card-title">DG Synchronization Test (If Applicable)</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="note">DG's maximum output power must be at least 1.5× the PuREPower 20.0 rating. For 20 kW PuREPower, DG capacity should be ~30 kW (≈ 37.5 kVA)</div>
+      <div class="row2">
+        <div class="field"><label class="lbl">Number of Diesel Generators</label><input type="number" placeholder="Count"></div>
+        <div class="field"><label class="lbl">DG Earthing Value (ohm)</label><input type="number" placeholder="ohm"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">DG Output Voltage Ph-Ph R (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">DG Output Voltage Ph-Ph Y (V)</label><input type="number" placeholder="V"></div>
+        <div class="field"><label class="lbl">DG Output Voltage Ph-Ph B (V)</label><input type="number" placeholder="V"></div>
+      </div>
+      <div class="field"><label class="lbl">DG Output Voltage Phase to Neutral (V)</label><input type="number" placeholder="V"></div>
+      <div class="field">
+        <label class="lbl">Grid input switched OFF — PuREPower running on DG Mode confirmed on LCD</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="dg_mode"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="dg_mode"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">DG full load synchronized with PuREPower</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="dg_sync"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="dg_sync"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Test run for at least 15 minutes with DG at full load</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="dg_15min"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="dg_15min"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field"><label class="lbl">Output Power DG Mode (W)</label><input type="number" placeholder="W"></div>
+        <div class="field"><label class="lbl">Load % on each Phase</label><input type="number" placeholder="%"></div>
+        <div class="field"><label class="lbl">AC Output Frequency (Hz)</label><input type="number" placeholder="Hz"></div>
+      </div>
+      <div class="field">
+        <label class="lbl">Battery charging through DG</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="bat_dg"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="bat_dg"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Grid input switched back ON — PuREPower auto-switched to grid mode</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="back_grid"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="back_grid"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">All loads running smoothly on grid mode</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="loads_grid"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="loads_grid"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Battery Details — 5 batteries -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🔋</div>
+      <span class="card-title">PuREPower Battery Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body" id="battery-container"></div>
+  </div>
+
+  <!-- Monitoring — Smart ESS App -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">📡</div>
+      <span class="card-title">Monitoring &amp; App Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="note">Ensure Wi-Fi router is set to 2.4 GHz and installed within 3 meters of the PuREPower unit</div>
+      <div class="field">
+        <label class="lbl">Wi-Fi Router Within 3 Meters — Attach Picture/Video</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_wifi" accept="image/*,video/*" onchange="handleFileUpload(this,'prev_wifi')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Wi-Fi Router Picture</strong><span>JPG, PNG or MP4</span></div></label>
+          <div class="file-preview" id="prev_wifi"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Upload Smart ESS Dongle Picture</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_dongle" accept="image/*" onchange="handleFileUpload(this,'prev_dongle')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Dongle Picture</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_dongle"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Upload Smart ESS App Main Page Screenshot</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_app" accept="image/*" onchange="handleFileUpload(this,'prev_app')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach App Screenshot</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_app"></div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">Smart ESS App Login Email</label><input type="email" placeholder="email@example.com"></div>
+        <div class="field"><label class="lbl">Smart ESS App Login Password</label><input type="password" placeholder="••••••••"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">PURE BMS App Login Email</label><input type="email" placeholder="email@example.com"></div>
+        <div class="field"><label class="lbl">PURE BMS App Login Password</label><input type="password" placeholder="••••••••"></div>
+      </div>
+      <div class="field">
+        <label class="lbl">Export enabled — Net Meter installed (P1 P2 P3)</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="netmeter"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="netmeter"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Installer Details -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon">🪪</div>
+      <span class="card-title">Installer Details</span>
+      <span class="card-chevron open">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="row2">
+        <div class="field"><label class="lbl">Channel Partner Firm Name</label><input type="text" placeholder="Firm name"></div>
+        <div class="field"><label class="lbl">Electrician Name</label><input type="text" placeholder="Full name"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label class="lbl">Electrician Mobile Number</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="field"><label class="lbl">Electrician Email</label><input type="email" placeholder="email@example.com"></div>
+      </div>
+      <div class="field"><label class="lbl">Date of Commissioning</label><input type="date"></div>
+      <div class="field">
+        <label class="lbl">Upload PuREPower Installation Photo (Mandatory)</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_install_photo" accept="image/*" onchange="handleFileUpload(this,'prev_install_photo')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Installation Photo</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_install_photo"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Upload PuREPower Label Photo (Mandatory)</label>
+        <div class="file-upload-wrap">
+          <label class="file-upload-label"><input type="file" id="att_label_photo" accept="image/*" onchange="handleFileUpload(this,'prev_label_photo')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Label Photo</strong><span>JPG or PNG</span></div></label>
+          <div class="file-preview" id="prev_label_photo"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Solar connected — Net Meter installed</label>
+        <div class="yn-group">
+          <label class="yn-opt" onclick="selectYN(this,'yes')"><input type="radio" name="solar_net"><span class="yn-dot"></span>Yes</label>
+          <label class="yn-opt" onclick="selectYN(this,'no')"><input type="radio" name="solar_net"><span class="yn-dot"></span>No</label>
+        </div>
+      </div>
+      <div class="field"><label class="lbl">Remarks</label><textarea placeholder="Any additional remarks or observations..."></textarea></div>
+      <div class="note" style="margin-top:16px;border-left-color:#f0a500;background:#fffbf0;">
+        ✅ By submitting, you confirm all I&C activities have been completed successfully and the system is in good working condition. Wi-Fi must be connected on the same day — otherwise warranty will be void.
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="handleSubmit()">
+      <span>✓</span> Submit I&amp;C Form
+    </button>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✅</div>
+    <h2>Form Submitted Successfully!</h2>
+    <p>Thank you for completing the PuREPower 20.0 I&C checklist.<br>Your submission has been recorded.</p>
+    <button class="new-btn" onclick="resetForm()">Submit Another Response</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var selectedStrings = 0;
+
+function toggleCard(header) {
+  var body = header.nextElementSibling;
+  var chevron = header.querySelector('.card-chevron');
+  body.classList.toggle('collapsed');
+  chevron.classList.toggle('open');
+}
+
+function handleFilledBy() {
+  var v = document.getElementById('filledBy').value;
+  document.getElementById('sec-pure').classList.toggle('hidden', v !== 'pure');
+  document.getElementById('sec-dealer').classList.toggle('hidden', v !== 'dealer');
+  updateProgress();
+}
+
+function handleSolar() {
+  var v = document.getElementById('solarConnected').value;
+  document.getElementById('sec-solar').classList.toggle('hidden', v !== 'yes');
+  if (v === 'yes' && selectedStrings === 0) showStrings(1);
+  updateProgress();
+}
+
+function selectYN(el, val) {
+  var group = el.closest('.yn-group');
+  group.querySelectorAll('.yn-opt').forEach(function(o) {
+    o.classList.remove('selected-yes', 'selected-no');
+  });
+  el.classList.add(val === 'yes' ? 'selected-yes' : 'selected-no');
+  updateProgress();
+}
+
+function buildStrings() {
+  var c = document.getElementById('strings-container');
+  c.innerHTML = '';
+  for (var n = 1; n <= 3; n++) {
+    var d = document.createElement('div');
+    d.className = 'sub-block';
+    d.id = 'str-' + n;
+    d.innerHTML = (n > 1 ? '<hr class="divider">' : '') +
+      '<div class="sub-header">⚡ String ' + n + ' Details</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label class="lbl">S' + n + ' — Modules in Series <small style="font-weight:400;text-transform:none">(N = 450 / Voc)</small></label><input type="number" placeholder="Count"></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — Strings Connected in Parallel</label><input type="number" placeholder="Count"></div></div>' +
+      '<div class="row2">' +
+      '<div class="field"><label class="lbl">S' + n + ' — Voltage VDC (V)</label><input type="number" placeholder="V"></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — Voltage does not exceed 450V</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,\'yes\')"><input type="radio" name="s' + n + '_450"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,\'no\')"><input type="radio" name="s' + n + '_450"><span class="yn-dot"></span>No</label></div></div></div>' +
+      '<div class="row2">' +
+      '<div class="field"><label class="lbl">S' + n + ' — Total System Size (DC Watts)</label><input type="number" placeholder="W"></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — Does not exceed 8500W</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,\'yes\')"><input type="radio" name="s' + n + '_8500"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,\'no\')"><input type="radio" name="s' + n + '_8500"><span class="yn-dot"></span>No</label></div></div></div>' +
+      '<div class="row2">' +
+      '<div class="field"><label class="lbl">S' + n + ' — Imax does not exceed 27A</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,\'yes\')"><input type="radio" name="s' + n + '_imax"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,\'no\')"><input type="radio" name="s' + n + '_imax"><span class="yn-dot"></span>No</label></div></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — MC4 Connector 32A used (if applicable)</label><div class="yn-group"><label class="yn-opt" onclick="selectYN(this,\'yes\')"><input type="radio" name="s' + n + '_mc4"><span class="yn-dot"></span>Yes</label><label class="yn-opt" onclick="selectYN(this,\'no\')"><input type="radio" name="s' + n + '_mc4"><span class="yn-dot"></span>No</label></div></div></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — PV Strings in Parallel per MPPT</label><input type="number" placeholder="Count"></div>' +
+      '<div class="row3">' +
+      '<div class="field"><label class="lbl">S' + n + ' — PV Input Voltage (V)</label><input type="number" placeholder="V"></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — PV Input Current (A)</label><input type="number" placeholder="A"></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — PV Input Power (W)</label><input type="number" placeholder="W"></div></div>' +
+      '<div class="field"><label class="lbl">S' + n + ' — Today\'s Generation (kWh)</label><input type="number" placeholder="kWh"></div>';
+    c.appendChild(d);
+  }
+}
+
+function buildBatteries() {
+  var c = document.getElementById('battery-container');
+  c.innerHTML = '';
+  for (var b = 1; b <= 5; b++) {
+    var d = document.createElement('div');
+    d.innerHTML = (b > 1 ? '<hr class="divider">' : '') +
+      '<div class="bat-header">🔋 Battery ' + b + ' Details</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' Serial Number</label><input type="text" placeholder="Serial number"></div>' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' Voltage (V)</label><input type="number" placeholder="V"></div></div>' +
+      '<div class="row3">' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' Charging Current (A)</label><input type="number" placeholder="A"></div>' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' Discharge Current (A)</label><input type="number" placeholder="A"></div>' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' SOC %</label><input type="number" placeholder="%"></div></div>' +
+      '<div class="field"><label class="lbl">Battery ' + b + ' Mode of Charging</label>' +
+      '<select><option value="">— Select —</option><option>Input AC Grid</option><option>Solar</option><option>DG</option></select></div>' +
+      '<div class="field"><label class="lbl">Upload Screenshot — PURE BMS App Battery ' + b + '</label>' +
+      '<div class="file-upload-wrap"><label class="file-upload-label"><input type="file" id="att_bat' + b + '" accept="image/*" onchange="handleFileUpload(this,\'prev_bat' + b + '\')"><span class="file-upload-icon">📎</span><div class="file-upload-text"><strong>Attach Battery ' + b + ' Screenshot</strong><span>JPG or PNG</span></div></label><div class="file-preview" id="prev_bat' + b + '"></div></div></div>';
+    c.appendChild(d);
+  }
+}
+
+function showStrings(n) {
+  selectedStrings = n;
+  document.querySelectorAll('.str-pill').forEach(function(p, i) {
+    p.classList.toggle('active', i < n);
+  });
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById('str-' + i);
+    if (el) el.classList.toggle('visible', i <= n);
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  var inputs = document.querySelectorAll('input:not([type=radio]):not([type=password]):not([type=file]), select, textarea');
+  var filled = 0;
+  inputs.forEach(function(el) {
+    if (el.readOnly) return;
+    if (el.value && el.value.trim() !== '') filled++;
+  });
+  var total = 0;
+  inputs.forEach(function(el) { if (!el.readOnly) total++; });
+  var pct = Math.min(100, Math.round((filled / Math.max(total, 1)) * 100));
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  var labels = ['Getting started...', 'Keep going...', 'Good progress!', 'Almost there!', 'Nearly complete!', 'Ready to submit!'];
+  var idx = Math.min(Math.floor(pct / 20), labels.length - 1);
+  document.getElementById('progress-text').textContent = labels[idx];
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+function handleSubmit() {
+  showToast('✓ Form submitted successfully!');
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('form-wrap').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handleFileUpload(input, previewId) {
+  var preview = document.getElementById(previewId);
+  preview.innerHTML = '';
+  Array.from(input.files).forEach(function(file) {
+    var chip = document.createElement('div');
+    chip.className = 'file-chip';
+    chip.innerHTML = '<span>📎 ' + file.name + '</span><span class="file-chip-remove" onclick="removeChip(this, \'' + input.id + '\')">✕</span>';
+    preview.appendChild(chip);
+  });
+  updateProgress();
+}
+
+function removeChip(btn, inputId) {
+  btn.parentElement.remove();
+  document.getElementById(inputId).value = '';
+  updateProgress();
+}
+
+document.addEventListener('input', updateProgress);
+document.addEventListener('change', updateProgress);
+
+buildStrings();
+buildBatteries();
+updateProgress();
+</script>
+</body>
+</html>
